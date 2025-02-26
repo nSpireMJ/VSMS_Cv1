@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import mpl_toolkits.mplot3d 
-import Axes3D
+#import Axes3D
 
 def transform_point(R, o, plocal):
     return o + R.dot(plocal)
