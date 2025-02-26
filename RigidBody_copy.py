@@ -17,47 +17,51 @@ def plot_frame(ax, R, o, label, length=0.5):
 
     ax.text(o[0], o[1], o[2], label, fontsize = 12, color = 'k')
 
+def Rx(gamma):
+    c = np.cos(gamma)
+    s = np.sin(gamma)
+    return np.array([[1, 0, 0], [0, c, -s], [0, s, c]])
+
+def Ry(beta):
+    c = np.cos(beta)
+    s = np.sin(beta)
+    return np.array([[c, 0, s], [0, 1, 0], [-s, 0, c]])
+
 def Rz(alpha):
     c = np.cos(alpha)
     s = np.sin(alpha)
     return np.array([[c, -s, 0], [s, c, 0], [0, 0, 1]])
     
 if __name__ == "__main__":
-    local_R = np.eye(3)
+    alfa = np.deg2rad(30)
+    gamma = np.deg2rad(45)
 
-    local_origin = np.array([0, 0, 0])
+    R_z = Rz(alfa)
+    R_x = Rx(gamma)
 
-    angle_deg = 30
-    angle_rad = np.deg2rad(angle_deg)
-    #world_R = Rz(angle_rad)
-    world_R = np.eye(3)
-
-    world_origin = np.array([1, 2, 3])
-
-    p_local = np.array([0.5, -0.5, 1])
-
-    p_world = transform_point(world_R, world_origin, p_local)
+    R_xz = R_x @ R_z
+    R_zx = R_z @ R_x
 
     fig = plt.figure(figsize=(12,6))
 
     # subplot 1
     ax1 = fig.add_subplot(121, projection='3d')
-    plot_frame(ax1, local_R, local_origin, "Local Frame", length=1)
-    ax1.scatter(p_local[0], p_local[1], p_local[2], color='magenta', s = 50, label="p in local frame")
-    ax1.set_title("Local Frame and p local")
-    ax1.set_xlim(-2, 2)
-    ax1.set_ylim(-2, 2)
-    ax1.set_zlim(-2, 2)
+    plot_frame(ax1, np.eye(3), np.array([0, 0, 0]), "World Frame")
+    plot_frame(ax1, R_xz, np.array([0, 0, 0]), "RZ")
+    ax1.set_title("Multiplication, First Rx, then Rz")
+    ax1.set_xlim(-1, 1)
+    ax1.set_ylim(-1, 1)
+    ax1.set_zlim(-1, 1)
     ax1.legend()
 
     ax2 = fig.add_subplot(122, projection='3d')
-    plot_frame(ax2, np.eye(3), np.array((0, 0, 0)), "World Base", length=1)
-    plot_frame(ax2, world_R, world_origin, "Transformed Frame")
-    ax2.scatter(p_world[0], p_world[1], p_world[2], color='orange', s=50, label="p in world frame")
-    ax2.set_title("World frame and p(transformed coordinates)")
-    ax2.set_xlim(-1, 4)
-    ax2.set_ylim(-1, 4)
-    ax2.set_zlim(0, 6)
+    plot_frame(ax2, np.eye(3), np.array((0, 0, 0)), "World Base")
+    plot_frame(ax2, R_zx, np.array([0, 0, 0]), "RX")
+    ax2.set_title("Multiplication, First Rz, then Rx")
+    ax2.set_xlim(-1, 1)
+    ax2.set_ylim(-1, 1)
+    ax2.set_zlim(-1, 1)
     ax2.legend()
 
     plt.show()
+    
